@@ -1,0 +1,45 @@
+# Run everything:  docker-compose up --build
+# Stop & remove:   docker-compose down
+# Stop + wipe DB:  docker-compose down -v
+
+services:
+
+  # ── MySQL Database ──────────────────────────────────────────────────────────
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: gin_backend
+    ports:
+      - "3307:3306"          # 3306 is taken by local MySQL; map to 3307 on host
+    volumes:
+      - db_data:/var/lib/mysql   # persist data across restarts
+    healthcheck:
+      # mysqladmin ping confirms the server is accepting connections
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s    # MySQL needs ~20-30 s to initialise on first run
+
+  # ── Go / Gin Backend ────────────────────────────────────────────────────────
+  backend:
+    build: .                     # uses the Dockerfile in the same directory
+    ports:
+      - "8080:8080"
+    environment:
+      # DB_HOST must match the service name above so Go can resolve it via
+      # Docker's internal DNS.  config/db.go reads these to build the DSN:
+      #   <DB_USER>:<DB_PASSWORD>@tcp(<DB_HOST>:3306)/<DB_NAME>
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: gin_backend
+      JWT_SECRET: your_secret_key   # change before production
+      PORT: 8080
+    depends_on:
+      db:
+        condition: service_healthy  # wait until MySQL passes its health check
+
+volumes:
+  db_data:

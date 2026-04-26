@@ -1,0 +1,19 @@
+# Don't copy these into the Docker build context
+
+# Local env file — env vars are set in docker-compose.yml instead
+.env
+
+# Git metadata
+.git
+.gitignore
+
+# Editor / IDE
+.vscode
+*.swp
+
+# Test output
+*.test
+
+# OS noise
+.DS_Store
+Thumbs.db
