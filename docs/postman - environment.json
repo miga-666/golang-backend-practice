@@ -1,0 +1,22 @@
+{
+	"id": "ea10adb7-c23d-42aa-9ce1-91a845d35440",
+	"name": "dev",
+	"values": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"color": null,
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2026-04-26T08:11:27.051Z",
+	"_postman_exported_using": "Postman/12.7.6"
+}
